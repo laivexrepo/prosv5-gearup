@@ -4,6 +4,7 @@
 #include "drivebase.h"
 #include "lift.h"
 #include "claw.h"
+#include "tray.h"
 #include "autonomous.h"
 
 
@@ -17,11 +18,24 @@ void initialize() {
 
 	pros::Motor left_wheel (LEFT_MOTOR_PORT, MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
 	pros::Motor right_wheel (RIGHT_MOTOR_PORT, MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
-	pros::Motor liftMotor1 (LIFT_MOTOR_PORT, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
-  pros::Motor clawMotor(CLAW_MOTOR_PORT, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+
+	// Uncomment when using TWO motors per drive side
+	//pros::Motor left_wheel_2 (LEFT_MOTOR_PORT_2, MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+	//pros::Motor right_wheel_2 (RIGHT_MOTOR_PORT_2, MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
+
+	pros::Motor liftMotor (LIFT_MOTOR_PORT, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+
+	pros::Motor trayMotor (TRAY_MOTOR_PORT, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+
+  pros::Motor clawMotor1(CLAW_MOTOR_PORT_1, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
+  // uncomment below motor defintinos if using two claw (intake) motors -- second motr runs in oppostire direction
+  //pros::Motor clawMotor2(CLAW_MOTOR_PORT_2, pros::E_MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
 
   // Set the brake mode for the lift motor - hold position when stopped
-	liftMotor1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+	liftMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+	// Set the brake mode for the tray motor - hold position when stopped
+	trayMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
 }
 
@@ -107,8 +121,19 @@ void opcontrol() {
 	 {
 		 tankControl();
    }
-	 liftControl();
+	 // lift control takes two speeds, first speed is the up direction speed,
+	 // the second is the down direction speed given in RPM
+	 liftControl(100, 50);
+
+   // control the intaqke (claw) if two motors - make sure they are
+	 // activated in glabls.c globals.h initialize() as well as in the clawControl
+	 // function in claw.cpp
 	 clawControl();
+
+	 // Control the movement of the tray inwards / outwards using appropriate speed
+	 // for each movement.
+	 trayControl(50,25);
+
  	 pros::delay(20);
   }
 }

@@ -1,11 +1,28 @@
 #ifndef PORT_DEF_H_
 #define PORT_DEF_H_
 
-//Motors
-#define LEFT_MOTOR_PORT  10
+//Drive base motors
+#define LEFT_MOTOR_PORT  10     // primary drive motors in drive train
 #define RIGHT_MOTOR_PORT  1
+
+// When you have two motors per side in your drive train, add second set of
+// motor port definitions
+#define LEFT_MOTOR_PORT_2  9    // when two motors perside drive train
+#define RIGHT_MOTOR_PORT_2  2
+
+// Lift motors
 #define LIFT_MOTOR_PORT 8
-#define CLAW_MOTOR_PORT 3
+
+// Claw (intake motors)
+#define CLAW_MOTOR_PORT_1 3
+
+// If two clawmotors uncomment below statement - it is also assumed that they
+// both run in opposite directiosn - so watch for the motor definition
+// statement in globals.c
+//#define CLAW_MOTOR_PORT_2 4
+
+// tray motors
+#define TRAY_MOTOR_PORT 16
 
 // ----------- Radio and Controllers ---------------
 #define VEX_RADIO 6

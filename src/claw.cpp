@@ -5,12 +5,21 @@
 
 void clawControl(){
   if (master.get_digital(DIGITAL_L1)) {
-     clawMotor.move_velocity(50);
+     clawMotor1.move_velocity(50);
+     // If two intake (claw) motors uncomment this - motor spins by default
+     // opposite direction of clawMotor1
+     //clawMotor2.move_velocity(50);
    }
    else if (master.get_digital(DIGITAL_L2)) {
-     clawMotor.move_velocity(-50);
+     clawMotor1.move_velocity(-50);
+     // If two intake (claw) motors uncomment this - motor spins by default
+     // opposite direction of clawMotor1
+     //clawMotor2.move_velocity(-50);
    }
    else {
-     clawMotor.move_velocity(0);
+     clawMotor1.move_velocity(0);
+     // If two intake (claw) motors uncomment this - motor spins by default
+     // opposite direction of clawMotor1
+     //clawMotor2.move_velocity(0);
    }
 }

@@ -12,6 +12,11 @@ void tankControl()
 
   left_wheel = left;
   right_wheel = right;
+
+  // if two motors per drive perside uncomment this
+  //left_wheel_2 = left;
+  //right_wheel_2 = right;
+
 }
 
 void arcadeControl()
@@ -23,11 +28,16 @@ void arcadeControl()
   int right = power - turn;
   left_wheel = left;
   right_wheel = right;
+
+  // if two motors per drive side, uncomment this
+  //left_wheel_2 = left;
+  //right_wheel_2 = right;
+
 }
 
 void driveForDistance(float distance, int speed) {
   // function drives robot for set distance where distance is
-  // given in cm.  A negative numebr makes the robot drive backwards.
+  // given in cm.  A negative number makes the robot drive backwards.
   // distance -- distance in cm
   // speed    -- speed in RPM -- please note cartridge installed for range
   //             red    - 100RPM max
@@ -45,6 +55,12 @@ void driveForDistance(float distance, int speed) {
   left_wheel.move_absolute(degreesTravel, speed);
   right_wheel.move_absolute(degreesTravel, speed);
 
+  // if two motors per drive side, uncomment this
+  //left_wheel_2.tare_position();       // ensure encoders are reset before
+  //right_wheel_2.tare_position();      // movement.
+  //left_wheel_2.move_absolute(degreesTravel, speed);
+  //right_wheel_2.move_absolute(degreesTravel, speed);
+
   if(DEBUG){
      std::cout << "\ndriveForDistance -- distance: " << distance << " speed: " << speed << "\n";
      std::cout << "Degrees to travel: " << degreesTravel << "\n";
@@ -60,6 +76,10 @@ void driveForDistance(float distance, int speed) {
   // we sill stop the motors
   left_wheel.move_velocity(0);
   right_wheel.move_velocity(0);
+
+  // If tow motors per drive side, uncomment this
+  //left_wheel_2.move_velocity(0);
+  //right_wheel_2.move_velocity(0);
 }
 
 void pivotTurn(float angle, int speed){
@@ -80,6 +100,11 @@ void pivotTurn(float angle, int speed){
   left_wheel.tare_position();       // ensure encoders are reset before
   right_wheel.tare_position();      // movement.
 
+  // If two motors per drive side, uncomment this
+  //left_wheel_2.tare_position();       // ensure encoders are reset before
+  //right_wheel_2.tare_position();      // movement.
+
+
   if(DEBUG){
     std::cout << "\nPivot Turn Function -- " << " speed: " << speed << "\n";
     std::cout << "Degrees to travel: " << degreesTravel << " Angle: " << angle << "\n";
@@ -90,11 +115,21 @@ void pivotTurn(float angle, int speed){
     //clockwise
     left_wheel.move_absolute(degreesTravel, speed);
     right_wheel.move_absolute(-degreesTravel, speed);
+
+    // If two motors per drive sideuncomment this
+    //left_wheel_2.move_absolute(degreesTravel, speed);
+    //right_wheel_2.move_absolute(-degreesTravel, speed);
+
   }
   if (angle <= 0){
     // counter clockwise
     left_wheel.move_absolute(degreesTravel, speed);
     right_wheel.move_absolute(-degreesTravel, speed);
+
+    // If two motors per drive sideuncomment this
+    //left_wheel_2.move_absolute(degreesTravel, speed);
+    //right_wheel_2.move_absolute(-degreesTravel, speed);
+
   }
   // We need to make sure motors reach there target +- 5 degrees.
   while (!((fabs(left_wheel.get_position()) < (maxTarget)) && (fabs(left_wheel.get_position()) > minTarget))) {
@@ -103,6 +138,11 @@ void pivotTurn(float angle, int speed){
   // we sill stop the motors
   left_wheel.move_velocity(0);
   right_wheel.move_velocity(0);
+
+  // If two motors per drive side, uncomment this
+  //left_wheel_2.move_velocity(0);
+  //right_wheel_2.move_velocity(0);
+
   if(DEBUG) {
     std::cout << "Encoder Left: " << left_wheel.get_position() << " Right: " << right_wheel.get_position() << "\n";
   }
@@ -125,6 +165,11 @@ void swingTurn(float angle, int speed){
   left_wheel.tare_position();       // ensure encoders are reset before
   right_wheel.tare_position();      // movement.
 
+  // If two motors per drive side, uncomment this
+  //left_wheel_2.tare_position();       // ensure encoders are reset before
+  //right_wheel_2.tare_position();      // movement.
+
+
   if(DEBUG){
     std::cout << "\nSwingTurn -- speed: " << speed << "\n";
     std::cout << "Degrees to travel: " << degreesTravel << " Angle: " << angle << "\n";
@@ -135,6 +180,11 @@ void swingTurn(float angle, int speed){
     //clockwise
     right_wheel.move_velocity(0);      // make sure we got a break on right wheel for swing turn
     left_wheel.move_absolute(degreesTravelAbs, speed);
+
+    // If two motors per drive side, uncomment this
+    //right_wheel_2.move_velocity(0);      // make sure we got a break on right wheel for swing turn
+    //left_wheel_2.move_absolute(degreesTravelAbs, speed);
+
     // We need to make sure motors reach there target +- 5 degrees.
     while (!((fabs(left_wheel.get_position()) < (maxTarget)) && (fabs(left_wheel.get_position()) > minTarget))) {
       pros::delay(2);
@@ -143,6 +193,11 @@ void swingTurn(float angle, int speed){
   if (angle <= 0){
     left_wheel.move_velocity(0);      // make sure we got a break on left wheel for swing turn
     right_wheel.move_absolute(degreesTravelAbs, speed);
+
+    // If two motors per drive side, uncomment this
+    //left_wheel_2.move_velocity(0);      // make sure we got a break on left wheel for swing turn
+    //right_wheel_2.move_absolute(degreesTravelAbs, speed);
+
     // We need to make sure motors reach there target +- 5 degrees.
     while (!((fabs(right_wheel.get_position()) < (maxTarget)) && (fabs(right_wheel.get_position()) > minTarget))) {
       pros::delay(2);
@@ -150,6 +205,11 @@ void swingTurn(float angle, int speed){
   }
   left_wheel.move_velocity(0);
   right_wheel.move_velocity(0);
+
+  // If two motors per drive side, uncomment this
+  //left_wheel_2.move_velocity(0);
+  //right_wheel_2.move_velocity(0);
+
   if(DEBUG) {
     std::cout << "Encoder Left: " << left_wheel.get_position() << " Right: " << right_wheel.get_position() << "\n";
   }

@@ -3,14 +3,14 @@
 #include "portdef.h"
 #include "lift.h"
 
-void liftControl(){
+void liftControl(int speedUp, int speedDown){
   if (master.get_digital(DIGITAL_R1)) {
-     liftMotor1.move_velocity(100);
+     liftMotor.move_velocity(speedUp);
    }
    else if (master.get_digital(DIGITAL_R2)) {
-     liftMotor1.move_velocity(-100);
+     liftMotor.move_velocity(-speedDown);
    }
    else {
-     liftMotor1.move_velocity(0);
+     liftMotor.move_velocity(0);
    }
 }

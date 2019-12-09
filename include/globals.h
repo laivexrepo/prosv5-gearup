@@ -6,8 +6,18 @@
 // ------------ make sure all motors are available to all code -------------
 extern pros::Motor left_wheel;
 extern pros::Motor right_wheel;
-extern pros::Motor liftMotor1;
-extern pros::Motor clawMotor;
+
+// If drive based has second motor per side uncomment these statements
+//extern pros::Motor left_wheel_2;
+//extern pros::Motor right_wheel_2;
+
+extern pros::Motor liftMotor;
+
+extern pros::Motor trayMotor;
+
+// Claw motors - if two motors used uncomment clawMotor2 statement
+extern pros::Motor clawMotor1;
+//extern pros::Motor clawMotor2;
 
 extern pros::Controller master;
 extern pros::Controller partner;
