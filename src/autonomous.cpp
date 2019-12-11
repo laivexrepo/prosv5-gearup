@@ -91,7 +91,7 @@ void runSkillAuto(){
   // Run the skill challenge (programming skill code)
   armAngle = liftMoveForAngle(45, 50 );        // move up 45degree from Zero point
   if(DEBUG) { std::cout << "Arm angle after move: " << armAngle << " \n";}
-  pros::delay(50000);               // 5 sec (5000mSec) delay for testing purpose
+  pros::delay(5000);               // 5 sec (5000mSec) delay for testing purpose
   armAngle = liftMoveForAngle(0, 50 );         // return to ZERO point
   if(DEBUG) { std::cout << "Arm angle after move: " << armAngle << " \n";}
 }
