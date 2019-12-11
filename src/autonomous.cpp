@@ -88,5 +88,7 @@ void runExtendedAuto(){
 
 void runSkillAuto(){
   // Run the skill challenge (programming skill code)
-  liftMoveForAngle(145, 50 );
+  liftMoveForAngle(45, 50 );        // move up 45degree from Zero point
+  pros::delay(10000);               // 10 sec delay for testing purpose
+  liftMoveForAngle(0, 50 );         // return to ZERO point
 }

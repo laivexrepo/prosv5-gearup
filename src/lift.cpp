@@ -3,7 +3,11 @@
 #include "portdef.h"
 #include "lift.h"
 
-float maxAngleMovement = 180;       // Maximum aangle lift can move to
+float maxAngleMovement = 90;       // Maximum aangle lift can move to
+
+int liftGearRatio = 7;              // gear ratio between motor and lift arm
+                                    // if a 12gear drives a 84gear the ratio is 84/12 = 7
+                                    // for direct drive it is 1
 
 void liftControl(int speedUp, int speedDown){
   if (master.get_digital(DIGITAL_R1)) {
@@ -40,13 +44,19 @@ float liftMoveForAngle(float angle, int speed ){
   // moves the lift to a given position based on angle provided, it returns the
   // angle of the lift where it has stopped
   if(DEBUG) { std::cout << "Request angle: " << angle << " speed: " << speed << "\n";}
+  if(DEBUG) { std::cout << "Gear Ratio: " << liftGearRatio << " New angle: " << angle * liftGearRatio << "\n"; }
+
+  angle = liftGearRatio * angle;            // account for gear Ratio
+
   // get current angle of the lift.
   float currentAngle = liftMotor.get_position();
 
   if(angle < 0) {
     if(DEBUG) { std::cout << "Can not move down past ZERO position \n"; }
   } else {
-    if(angle > maxAngleMovement) {
+    if(angle > (maxAngleMovement * liftGearRatio) ) {
+      // We need to accomedate gear ratio in calculation the true angle is adjusted
+      // by liftGearRatio for the actual motor move angle.
       if(DEBUG) { std::cout << "Can not move past maximum angle of:" << maxAngleMovement << " \n"; }
     } else {
       // we can move so lets....
@@ -60,6 +70,6 @@ float liftMoveForAngle(float angle, int speed ){
       }
     }
   }
-  if(DEBUG) { std::cout << "Final anlge: " << liftMotor.get_position() << " \n"; }
+  if(DEBUG) { std::cout << "Final angle: " << liftMotor.get_position() << " True angle: " << (liftMotor.get_position() / liftGearRatio) << " \n"; }
   return(liftMotor.get_position());
 }
