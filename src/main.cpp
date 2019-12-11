@@ -6,6 +6,7 @@
 #include "claw.h"
 #include "tray.h"
 #include "autonomous.h"
+#include "lcd.h"
 
 
 /**
@@ -37,6 +38,28 @@ void initialize() {
 	// Set the brake mode for the tray motor - hold position when stopped
 	trayMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
+  // Initialize the LCD display
+	pros::delay(50);						// we need to give the LCD threat time to starts
+															// otherwise the screen won't draw properly
+	pros::lcd::initialize();
+  pros::delay(20);						// We need the give the LCD call time to
+															// complete.
+
+	pros::lcd::register_btn0_cb(on_left_button);		// register callback buttons
+	pros::lcd::register_btn1_cb(on_center_button);
+	pros::lcd::register_btn2_cb(on_right_button);
+
+	pros::delay(100);
+
+	if (!pros::competition::is_connected()) {
+    // Field Control is NOT Connected, so for us to see the LCD menu
+		// we need to manual fire off competition_initialize()
+    // to see the LCD Selector
+		if(DEBUG){ std::cout << "Not connected to FIELD control \n"; }
+		competition_initialize();
+  } else {
+				if(DEBUG){ std::cout << "Connected to FIELD control \n"; }
+	}
 }
 
 /**
@@ -57,6 +80,19 @@ void disabled() {}
  */
 void competition_initialize() {
 	// We can put LCD selector here
+	if(DEBUG){ std::cout << "Running Competition Initialize \n"; }
+
+  // LEFT button toggles between 15sec, 45sec and 60sec autonomous routine
+	// Set a global variable autonomousTime to either 15, 45 or 60
+	//pros::lcd::print(1, "Press LEFT button to toggle Autonomous Time");
+  pros::lcd::print(1, "Autonomous selected: %d", autonomousTime);
+
+  // CENTER button sets ZERO points of all encoders for lift
+  pros::lcd::print(2, "Press CENTER button to set ZERO point");
+
+  // RIGHT button selects the autonomous starting point RED or BLUE
+	pros::lcd::print(3, "Side selected: RED or BLUE");
+
 }
 
 /**
@@ -71,23 +107,30 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
+  pros::lcd::clear();												// CLEAR out the LCD display
+	pros::delay(20);													// We need to give function time to complete
+
 	// drive forward a given distance in cm.
 	if(DEBUG){ std::cout << "Starting Autonomous Task \n"; }
-	driveForDistance(100, 50);  // 100cm forward
+	// we need to decide which autonomous routine/code to run, based
+	// on the global variable autonomousTime
 
-	driveForDistance(-100, 50); // 100cm backwards
+	switch(autonomousTime) {
+		case 15:
+			// Run the standard 15 sec autonomous code
+			runStandardAuto();
+			break;
 
-	// pivot turn
-	pivotTurn(90, 50);					// 90degree clockwise at 50RPM
+		case 45:
+		  // Run the 45 sec autonomous code
+			runExtendedAuto();
+			break;
 
-  pivotTurn(-90,50);					// 90 degree coutner clockwise at 50RPM
-
-	driveForDistance(50, 100);  // 50cm forward  at 100RPM
-
-	swingTurn(90, 50);					// 90 degree swing turn at 50RPM clockwise
-
-	swingTurn(-90, 50);					// 90 degree swing turn at 50RPM counter clockwise
-
+		case 60:
+			// Run the 60 seconds - programmign skill code
+      runSkillAuto();
+			break;
+	}
 }
 
 /**
@@ -105,35 +148,36 @@ void autonomous() {
  */
 void opcontrol() {
 	if(DEBUG){ std::cout << "Starting Opcontrol Task \n"; }
+
   // call manual autonomous run option, should be commented out in
 	// tournament production code to invertenly trigger autonmous
 	// during driver control
 	if(MANUAL_AUTON) {manualAutonomous(); }		// allow for manual autonmous starts
 																						// define is does in globals.h
 
+	pros::lcd::clear();												// CLEAR out the LCD display
+  pros::delay(20);													// We need to give function time to complete
 
   while(true) {
-	 if(ARCADE_MODE) {												// If set to true operate in ARCADE_MODE
+	 	if(ARCADE_MODE) {												// If set to true operate in ARCADE_MODE
 		 																				// this is controlled in globals.h
-		 arcadeControl();
-	 }
-	 else
-	 {
-		 tankControl();
-   }
-	 // lift control takes two speeds, first speed is the up direction speed,
-	 // the second is the down direction speed given in RPM
-	 liftControl(100, 50);
+		 	arcadeControl();
+	 	} else {
+		  tankControl();
+    }
+	  // lift control takes two speeds, first speed is the up direction speed,
+	  // the second is the down direction speed given in RPM
+	  liftControl(100, 50);
 
-   // control the intaqke (claw) if two motors - make sure they are
-	 // activated in glabls.c globals.h initialize() as well as in the clawControl
-	 // function in claw.cpp
-	 clawControl();
+    // control the intaqke (claw) if two motors - make sure they are
+	  // activated in glabls.c globals.h initialize() as well as in the clawControl
+	  // function in claw.cpp
+	  clawControl();
 
-	 // Control the movement of the tray inwards / outwards using appropriate speed
-	 // for each movement.
-	 trayControl(50,25);
+	  // Control the movement of the tray inwards / outwards using appropriate speed
+	  // for each movement.
+	  trayControl(50,25);
 
- 	 pros::delay(20);
+ 	  pros::delay(20);
   }
 }

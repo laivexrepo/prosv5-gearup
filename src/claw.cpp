@@ -4,6 +4,8 @@
 #include "claw.h"
 
 void clawControl(){
+  // you could make clawCOntrol also take an input varibale for speed,
+  // perhaps an speedOpen and a speedClose
   if (master.get_digital(DIGITAL_L1)) {
      clawMotor1.move_velocity(50);
      // If two intake (claw) motors uncomment this - motor spins by default
