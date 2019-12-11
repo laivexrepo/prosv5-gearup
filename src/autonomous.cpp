@@ -87,8 +87,11 @@ void runExtendedAuto(){
 }
 
 void runSkillAuto(){
+  float armAngle = 0;
   // Run the skill challenge (programming skill code)
-  liftMoveForAngle(45, 50 );        // move up 45degree from Zero point
-  pros::delay(10000);               // 10 sec delay for testing purpose
-  liftMoveForAngle(0, 50 );         // return to ZERO point
+  armAngle = liftMoveForAngle(45, 50 );        // move up 45degree from Zero point
+  if(DEBUG) { std::cout << "Arm angle after move: " << armAngle << " \n";}
+  pros::delay(50000);               // 5 sec (5000mSec) delay for testing purpose
+  armAngle = liftMoveForAngle(0, 50 );         // return to ZERO point
+  if(DEBUG) { std::cout << "Arm angle after move: " << armAngle << " \n";}
 }
