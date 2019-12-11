@@ -52,13 +52,9 @@ void initialize() {
 	pros::delay(100);
 
 	if (!pros::competition::is_connected()) {
-    // Field Control is NOT Connected, so for us to see the LCD menu
-		// we need to manual fire off competition_initialize()
-    // to see the LCD Selector
 		if(DEBUG){ std::cout << "Not connected to FIELD control \n"; }
-		competition_initialize();
   } else {
-				if(DEBUG){ std::cout << "Connected to FIELD control \n"; }
+		if(DEBUG){ std::cout << "Connected to FIELD control \n"; }
 	}
 }
 
