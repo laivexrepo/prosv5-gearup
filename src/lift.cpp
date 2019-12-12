@@ -3,7 +3,7 @@
 #include "portdef.h"
 #include "lift.h"
 
-float maxAngleMovement = 90;       // Maximum aangle lift can move to
+float maxAngleMovement = 90;       // Maximum angle lift can move to
 
 int liftGearRatio = 7;              // gear ratio between motor and lift arm
                                     // if a 12gear drives a 84gear the ratio is 84/12 = 7

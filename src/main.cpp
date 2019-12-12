@@ -48,8 +48,8 @@ void initialize() {
 	pros::lcd::register_btn0_cb(on_left_button);		// register callback buttons
 	pros::lcd::register_btn1_cb(on_center_button);
 	pros::lcd::register_btn2_cb(on_right_button);
-
-	pros::delay(100);
+	pros::delay(100);																// We need to give the CLD thread
+																									// time to write to the screen
 
 	if (!pros::competition::is_connected()) {
 		if(DEBUG){ std::cout << "Not connected to FIELD control \n"; }

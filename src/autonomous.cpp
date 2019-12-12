@@ -21,7 +21,6 @@ void manualAutonomous(){
 
   // LEFT button toggles between 15sec, 45sec and 60sec autonomous routine
 	// Set a global variable autonomousTime to either 15, 45 or 60
-	//pros::lcd::print(1, "Press LEFT button to toggle Autonomous Time");
   pros::lcd::print(1, "Autonomous selected: %d", autonomousTime);
 
   // CENTER button sets ZERO points of all encoders for lift
