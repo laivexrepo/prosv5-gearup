@@ -124,6 +124,7 @@ void autonomous() {
 	// on the global variable autonomousTime
 
 	switch(autonomousTime) {
+		default:									// If we have no selection defualt to 15 seconds
 		case 15:
 			// Run the standard 15 sec autonomous code
 			if(DEBUG){ std::cout << "Starting runStandardAuto function  \n"; }
