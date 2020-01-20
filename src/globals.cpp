@@ -38,6 +38,13 @@ pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 
 pros::Vision vision_sensor (VISION_PORT);
 
+// ---------- Global Task Variables ----------------------------------------
+
+int intakeState = 0;
+int liftMoveAngle = 0;        // angle to move arm at in liftTask
+int liftMoveSpeed = 50;       // speed to move lift at in liftTask
+int liftLastMoveAngle = 0;    // last move angle requested in liftTask
+
 // --------------------- Global Function definitions ---------------------------
 
 void robotDataLogger() {

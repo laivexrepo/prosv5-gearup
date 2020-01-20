@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "drivebase.h"
 #include "lift.h"
+#include "tasks.h"
 
 int autonomousTime = 15;    // 15sec 45sec 60sec autonomous run
 
@@ -58,7 +59,15 @@ void manualAutonomous(){
 
 void runStandardAuto() {
   // Standard 15 seconds autonomous
+  intakeState = 1;            // Start running intake forward,
+                              // untill we change the intakeState - this controls
+                              // the intakeTaskFnc tasks behaviour
+
   driveForDistance(100, 50);  // 100cm forward
+
+  liftMoveAngle = 45;         // Tell lift task to move arm
+  liftMoveSpeed = 50;
+
   driveForDistance(-100, 50); // 100cm backwards
 
   // pivot turn

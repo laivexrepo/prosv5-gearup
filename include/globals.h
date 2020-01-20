@@ -34,4 +34,11 @@ extern void robotDataLogger();
 #define MANUAL_AUTON true     // allow for autonomous testing use Remote intead of
                               // competition switch -- set to false for production
                               // and competition!!!
+
+// ---------- Global Task Variables ----------------------------------------
+
+extern int intakeState;
+extern int liftMoveAngle;
+extern int liftMoveSpeed;
+extern int liftLastMoveAngle;
 #endif

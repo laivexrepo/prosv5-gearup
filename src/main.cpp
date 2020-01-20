@@ -7,6 +7,7 @@
 #include "tray.h"
 #include "autonomous.h"
 #include "lcd.h"
+#include "tasks.h"
 
 
 /**
@@ -106,6 +107,17 @@ void autonomous() {
   pros::lcd::clear();												// CLEAR out the LCD display
 	pros::delay(20);													// We need to give function time to complete
 
+  // Start the various Autonomus tasks to allow "parallel" operation of mechanisms
+	pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
+                TASK_STACK_DEPTH_DEFAULT, "Intake Task"); //starts the task
+	// no need to provide any other parameters
+
+	pros::Task liftTask(liftTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
+                TASK_STACK_DEPTH_DEFAULT, "Lift Task"); //starts the task
+	// no need to provide any other parameters
+
+  pros::delay(30);
+
 	// drive forward a given distance in cm.
 	if(DEBUG){ std::cout << "Starting Autonomous Task \n"; }
 	// we need to decide which autonomous routine/code to run, based
@@ -114,6 +126,7 @@ void autonomous() {
 	switch(autonomousTime) {
 		case 15:
 			// Run the standard 15 sec autonomous code
+			if(DEBUG){ std::cout << "Starting runStandardAuto function  \n"; }
 			runStandardAuto();
 			break;
 
