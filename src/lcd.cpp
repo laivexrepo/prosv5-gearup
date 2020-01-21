@@ -3,6 +3,7 @@
 #include "portdef.h"
 #include "lcd.h"
 #include "lift.h"
+#include "claw.h"
 #include "autonomous.h"
 
 // left chooser button call back
@@ -33,6 +34,7 @@ void on_left_button() {
 void on_center_button(){
     pros::lcd::print(2, "Setting ZERO point for lift!");
     liftSetLowPreset();
+    clawSetLowPreset();
 }
 
 // right chooser button call back

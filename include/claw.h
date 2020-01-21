@@ -3,4 +3,8 @@
 
 void clawControl();
 
+void clawSetLowPreset();
+
+float clawOpenForAngle(float angle, int speed );
+
 #endif

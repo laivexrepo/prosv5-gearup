@@ -4,6 +4,7 @@
 #include "drivebase.h"
 #include "lift.h"
 #include "tasks.h"
+#include "claw.h"
 
 int autonomousTime = 15;    // 15sec 45sec 60sec autonomous run
 
@@ -62,6 +63,7 @@ void runStandardAuto() {
   intakeState = 1;            // Start running intake forward,
                               // untill we change the intakeState - this controls
                               // the intakeTaskFnc tasks behaviour
+
 
   driveForDistance(100, 50);  // 100cm forward
 
