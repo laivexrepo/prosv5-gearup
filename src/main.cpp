@@ -48,11 +48,14 @@ void initialize() {
 	// Set the brake mode for the tray motor - hold position when stopped
 	trayMotor.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
-  // Initialize the LCD display
+	// Set the brake mode for the claw motor - hold position when stopped
+	clawMotor1.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
+	// Initialize the LCD display
 	pros::delay(50);						// we need to give the LCD threat time to starts
 															// otherwise the screen won't draw properly
 	pros::lcd::initialize();
-  pros::delay(20);						// We need the give the LCD call time to
+	pros::delay(50);						// We need the give the LCD call time to
 															// complete.
 
 	pros::lcd::register_btn0_cb(on_left_button);		// register callback buttons
@@ -60,6 +63,7 @@ void initialize() {
 	pros::lcd::register_btn2_cb(on_right_button);
 	pros::delay(100);																// We need to give the CLD thread
 																									// time to write to the screen
+
 
 	if (!pros::competition::is_connected()) {
 		if(DEBUG){ std::cout << "Not connected to FIELD control \n"; }
@@ -135,6 +139,9 @@ void autonomous() {
 
 	// drive forward a given distance in cm.
 	if(DEBUG){ std::cout << "Starting Autonomous Task \n"; }
+
+	if(runTask) { std::cout << "runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
+
 	// we need to decide which autonomous routine/code to run, based
 	// on the global variable autonomousTime
 
@@ -180,6 +187,8 @@ void opcontrol() {
 	// during driver control
 	if(MANUAL_AUTON) {manualAutonomous(); }		// allow for manual autonmous starts
 																						// define is does in globals.h
+
+  runTask = false;													// ensure manually started tasks are Ended
 
 	pros::lcd::clear();												// CLEAR out the LCD display
   pros::delay(20);													// We need to give function time to complete

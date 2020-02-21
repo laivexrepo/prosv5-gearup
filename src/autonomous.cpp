@@ -46,13 +46,17 @@ void manualAutonomous(){
      if (master.get_digital(DIGITAL_A)) {
         // If the button A is pushed on the master remote, we will call Autonomous
         // function
+        runTask=true;       // start task in manual autonomous
+
         if(DEBUG){ std::cout << "Starting Autonomous Task \n"; }
+        if(runTask) { std::cout << "runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
         autonomous();        // Run autonomous manual
         autoCheck=false;
     }
     if (master.get_digital(DIGITAL_Y)) {
        // Drop out of autonomous check when the Y button is pressed
        autoCheck=false;
+       runTask=false;       // ensure tasks end
        if(DEBUG){ std::cout << "Ended Manual Autonomus Task \n"; }
     }
   }
@@ -64,6 +68,7 @@ void runStandardAuto() {
                               // untill we change the intakeState - this controls
                               // the intakeTaskFnc tasks behaviour
 
+  if(runTask) { std::cout << "runStandardAuto: runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
 
   driveForDistance(100, 50);  // 100cm forward
 

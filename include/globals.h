@@ -31,7 +31,7 @@ extern void robotDataLogger();
 // ----------- Global variables to assist in code development ------------
 #define DEBUG true            // turn on DEBUG statements, should be off in final build
 
-#define MANUAL_AUTON true     // allow for autonomous testing use Remote intead of
+#define MANUAL_AUTON false     // allow for autonomous testing use Remote intead of
                               // competition switch -- set to false for production
                               // and competition!!!
 
@@ -41,8 +41,5 @@ extern int intakeState;
 extern int liftMoveAngle;
 extern int liftMoveSpeed;
 extern int liftLastMoveAngle;
-
-//extern pros::Task intakeTask();
-//extern pros::Task liftTask();
 
 #endif

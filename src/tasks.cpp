@@ -5,6 +5,8 @@
 #include "lift.h"
 #include "claw.h"
 
+bool runTask=false;               // controls if tasks should run.
+
 void intakeTaskFnc(void* ignore) {
   //the void* is there to provide a way to pass a
   //generic value or structure to the task if needed
@@ -17,31 +19,36 @@ void intakeTaskFnc(void* ignore) {
   float clawAngle = 0;
 
   std::cout << "Starting Intake Task \n";
-  //while(true) {
-  while (pros::competition::is_autonomous()) {
-    switch(intakeState){
-      default:
-      case 0:                    // claw closed / locked
-         clawMotor1.move_velocity(0);
-         // sample of using a function to open  close a claw
-         // clawAngle = clawOpenForAngle(0,35);
-      break;
+  // run the main task loop ONLY in autonomous mode
+  if(runTask) { std::cout << " IntakeTaskFnc: runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
+  while(true) {
+    while (pros::competition::is_autonomous() || runTask) {
+      switch(intakeState){
+        default:
+        case 0:                    // claw closed / locked
+          clawMotor1.move_velocity(0);
+          // sample of using a function to open  close a claw
+          // clawAngle = clawOpenForAngle(0,35);
+        break;
 
-      case 1:                   // open claw
-         clawMotor1.move_velocity(50);
-         // sample of using a function to open  close a claw
-         // clawAngle = clawOpenForAngle(70,35);
-      break;
+        case 1:                   // open claw
+          clawMotor1.move_velocity(50);
+          // sample of using a function to open  close a claw
+          // clawAngle = clawOpenForAngle(70,35);
+        break;
 
-      case 2:                   // close claw
-        clawMotor1.move_velocity(-50);
-        // sample of using a function to open  close a claw
-        // clawAngle = clawOpenForAngle(0,35);
-      break;
+        case 2:                   // close claw
+          clawMotor1.move_velocity(-50);
+          // sample of using a function to open  close a claw
+          // clawAngle = clawOpenForAngle(0,35);
+        break;
+      }
+      pros::delay(20);      // DO NOT starve the task!!
     }
-    pros::delay(20);
+    pros::delay(20);        // DO NOT starve the task!!
   }
 }
+
 
 void liftTaskFnc(void* ignore) {
   //the void* is there to provide a way to pass a
@@ -59,13 +66,18 @@ void liftTaskFnc(void* ignore) {
   // liftLastMoveAngle  -- last angle we requested to be moved to
 
   if(DEBUG) {std::cout << "Lift Move For Angle: " << liftMoveAngle << " Previous Angle: " << liftLastMoveAngle << " \n"; }
-  while (pros::competition::is_autonomous()) {
-  //`while(true) {
-    if ( liftMoveAngle != liftLastMoveAngle) {
-       // We only move the lift IF we have a change in angle request
-       liftMoveForAngle(liftMoveAngle, liftMoveSpeed );
-       liftLastMoveAngle = liftMoveAngle;
+
+  if(runTask) { std::cout << "LiftTAskFnc: runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
+  // run the main task loop ONLY in autonomous mode
+  while(true) {
+    while (pros::competition::is_autonomous() || runTask) {
+      if ( liftMoveAngle != liftLastMoveAngle) {
+        // We only move the lift IF we have a change in angle request
+        liftMoveForAngle(liftMoveAngle, liftMoveSpeed );
+        liftLastMoveAngle = liftMoveAngle;
+      }
+      pros::delay(20);            // DO NOT starve the task!!
     }
-    pros::delay(20);
+    pros::delay(20);              // DO NOT starve the task!!
   }
 }
