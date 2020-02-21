@@ -9,6 +9,15 @@
 #include "lcd.h"
 #include "tasks.h"
 
+// Start the various Autonomus tasks to allow "parallel" operation of mechanisms
+pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
+							TASK_STACK_DEPTH_DEFAULT, "Intake Task"); //starts the task
+// no need to provide any other parameters
+
+pros::Task liftTask(liftTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
+							TASK_STACK_DEPTH_DEFAULT, "Lift Task"); //starts the task
+// no need to provide any other parameters
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -106,7 +115,7 @@ void competition_initialize() {
 void autonomous() {
   pros::lcd::clear();												// CLEAR out the LCD display
 	pros::delay(20);													// We need to give function time to complete
-
+/*
   // Start the various Autonomus tasks to allow "parallel" operation of mechanisms
 	pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
                 TASK_STACK_DEPTH_DEFAULT, "Intake Task"); //starts the task
@@ -115,6 +124,12 @@ void autonomous() {
 	pros::Task liftTask(liftTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
                 TASK_STACK_DEPTH_DEFAULT, "Lift Task"); //starts the task
 	// no need to provide any other parameters
+*/
+	if(DEBUG) {
+		std::cout << "Are the two required Tasks running? \n";
+		std::cout << "Task Name:" << intakeTask.get_name() << "\n";
+		std::cout << "Task Name:" << liftTask.get_name() << "\n";
+	}
 
   pros::delay(30);
 
@@ -158,6 +173,7 @@ void autonomous() {
  */
 void opcontrol() {
 	if(DEBUG){ std::cout << "Starting Opcontrol Task \n"; }
+
 
   // call manual autonomous run option, should be commented out in
 	// tournament production code to invertenly trigger autonmous

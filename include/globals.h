@@ -41,4 +41,8 @@ extern int intakeState;
 extern int liftMoveAngle;
 extern int liftMoveSpeed;
 extern int liftLastMoveAngle;
+
+//extern pros::Task intakeTask();
+//extern pros::Task liftTask();
+
 #endif

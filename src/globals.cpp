@@ -9,6 +9,7 @@
 
 #include "main.h"
 #include "portdef.h"
+#include "tasks.h"
 
 
 // --------------------- Global Motor Definitions ------------------------------

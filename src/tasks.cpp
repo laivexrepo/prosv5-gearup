@@ -13,11 +13,12 @@ void intakeTaskFnc(void* ignore) {
   // While intake in this case runs a claw, the sample code is actually
   // runs the "motor" forward or backwards or stopped - it is easily
   // extended to have two motors including running in opposite direction
-  
+
   float clawAngle = 0;
 
   std::cout << "Starting Intake Task \n";
-  while(true) {
+  //while(true) {
+  while (pros::competition::is_autonomous()) {
     switch(intakeState){
       default:
       case 0:                    // claw closed / locked
@@ -58,7 +59,8 @@ void liftTaskFnc(void* ignore) {
   // liftLastMoveAngle  -- last angle we requested to be moved to
 
   if(DEBUG) {std::cout << "Lift Move For Angle: " << liftMoveAngle << " Previous Angle: " << liftLastMoveAngle << " \n"; }
-  while(true) {
+  while (pros::competition::is_autonomous()) {
+  //`while(true) {
     if ( liftMoveAngle != liftLastMoveAngle) {
        // We only move the lift IF we have a change in angle request
        liftMoveForAngle(liftMoveAngle, liftMoveSpeed );
