@@ -5,6 +5,7 @@
 #include "lift.h"
 #include "tasks.h"
 #include "claw.h"
+#include "imu.h"
 
 int autonomousTime = 15;    // 15sec 45sec 60sec autonomous run
 
@@ -46,17 +47,22 @@ void manualAutonomous(){
      if (master.get_digital(DIGITAL_A)) {
         // If the button A is pushed on the master remote, we will call Autonomous
         // function
-        runTask=true;       // start task in manual autonomous
+        runTaskIntake=true;       // start task in manual autonomous
+        runTaskLift=true;
 
         if(DEBUG){ std::cout << "Starting Autonomous Task \n"; }
-        if(runTask) { std::cout << "runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
+        if(runTaskLift) { std::cout << "runTaskLift is TRUE \n";} else { std::cout << "runTaskLift is FALSE \n";}
+        if(runTaskIntake) { std::cout << "runTaskIntake is TRUE \n";} else { std::cout << "runTaskIntake is FALSE \n";}
+
         autonomous();        // Run autonomous manual
         autoCheck=false;
     }
     if (master.get_digital(DIGITAL_Y)) {
        // Drop out of autonomous check when the Y button is pressed
        autoCheck=false;
-       runTask=false;       // ensure tasks end
+       runTaskIntake=false;       // ensure tasks end
+       runTaskLift=false;
+
        if(DEBUG){ std::cout << "Ended Manual Autonomus Task \n"; }
     }
   }
@@ -68,8 +74,21 @@ void runStandardAuto() {
                               // untill we change the intakeState - this controls
                               // the intakeTaskFnc tasks behaviour
 
-  if(runTask) { std::cout << "runStandardAuto: runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
+  float angleOfTurn;
 
+  if(runTaskLift) { std::cout << "runStandardAuto: runTaskLift is TRUE \n";} else { std::cout << "runTaskLift is FALSE \n";}
+  if(runTaskIntake) { std::cout << "runStandardAuto: runTaskIntake is TRUE \n";} else { std::cout << "runTaskIntake is FALSE \n";}
+
+  angleOfTurn = pivotForAngleWithIMU(90, 100);
+
+  if(DEBUG) { std::cout << "Angle of turn: " << angleOfTurn << " Current Heading: " << imu_sensor.get_heading() << " \n"; }
+  pros::delay(1000);            // wait a second
+
+  angleOfTurn = pivotForAngleWithIMU(-90, 15);
+
+  if(DEBUG) { std::cout << "Angle of turn: " << angleOfTurn << " Current Heading: " << imu_sensor.get_heading() << " \n"; }
+
+ /*
   driveForDistance(100, 50);  // 100cm forward
 
   liftMoveAngle = 45;         // Tell lift task to move arm
@@ -85,6 +104,7 @@ void runStandardAuto() {
 
   swingTurn(90, 50);					// 90 degree swing turn at 50RPM clockwise
   swingTurn(-90, 50);					// 90 degree swing turn at 50RPM counter clockwise
+*/
 
 }
 

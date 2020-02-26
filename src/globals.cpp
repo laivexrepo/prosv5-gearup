@@ -39,6 +39,10 @@ pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 
 pros::Vision vision_sensor (VISION_PORT);
 
+// ------------------ IMU ------------------------------------------------------
+
+pros::Imu imu_sensor(IMU_PORT);
+
 // ---------- Global Task Variables ----------------------------------------
 
 int intakeState = 0;

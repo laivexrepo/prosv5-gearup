@@ -5,7 +5,8 @@
 #include "lift.h"
 #include "claw.h"
 
-bool runTask=false;               // controls if tasks should run.
+bool runTaskLift=false;               // controls LIFT if tasks should run.
+bool runTaskIntake=false;             // controls INTAKE if tasks should run
 
 void intakeTaskFnc(void* ignore) {
   //the void* is there to provide a way to pass a
@@ -20,9 +21,9 @@ void intakeTaskFnc(void* ignore) {
 
   std::cout << "Starting Intake Task \n";
   // run the main task loop ONLY in autonomous mode
-  if(runTask) { std::cout << " IntakeTaskFnc: runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
+  if(runTaskIntake) { std::cout << " IntakeTaskFnc: runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
   while(true) {
-    while (pros::competition::is_autonomous() || runTask) {
+    while (pros::competition::is_autonomous() || runTaskIntake) {
       switch(intakeState){
         default:
         case 0:                    // claw closed / locked
@@ -67,10 +68,10 @@ void liftTaskFnc(void* ignore) {
 
   if(DEBUG) {std::cout << "Lift Move For Angle: " << liftMoveAngle << " Previous Angle: " << liftLastMoveAngle << " \n"; }
 
-  if(runTask) { std::cout << "LiftTAskFnc: runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
+  if(runTaskLift) { std::cout << "LiftTAskFnc: runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
   // run the main task loop ONLY in autonomous mode
   while(true) {
-    while (pros::competition::is_autonomous() || runTask) {
+    while (pros::competition::is_autonomous() || runTaskLift) {
       if ( liftMoveAngle != liftLastMoveAngle) {
         // We only move the lift IF we have a change in angle request
         liftMoveForAngle(liftMoveAngle, liftMoveSpeed );

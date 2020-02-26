@@ -8,6 +8,8 @@
 #include "autonomous.h"
 #include "lcd.h"
 #include "tasks.h"
+#include "imu.h"
+
 
 // Start the various Autonomus tasks to allow "parallel" operation of mechanisms
 pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
@@ -63,7 +65,21 @@ void initialize() {
 	pros::lcd::register_btn2_cb(on_right_button);
 	pros::delay(100);																// We need to give the CLD thread
 																									// time to write to the screen
+  // initialize inertial sensor and calibrate
+  pros::Imu imu_sensor(IMU_PORT);
 
+	imu_sensor.reset();				// Reset the IMU and start calibration process, robot
+														// should not be moved during this stage of calibration.
+
+	int time = pros::millis();
+	int iter = 0;
+	while (imu_sensor.is_calibrating()) {
+		std::cout << "IMU calibrating... " << iter << "\n";
+		iter += 10;
+		pros::delay(10);
+	}
+	// should print about 2000 ms
+	std::cout << "IMU is done calibrating (took: " << iter - time << "ms \n";
 
 	if (!pros::competition::is_connected()) {
 		if(DEBUG){ std::cout << "Not connected to FIELD control \n"; }
@@ -140,7 +156,8 @@ void autonomous() {
 	// drive forward a given distance in cm.
 	if(DEBUG){ std::cout << "Starting Autonomous Task \n"; }
 
-	if(runTask) { std::cout << "runTask is TRUE \n";} else { std::cout << "runTask is FALSE \n";}
+	if(runTaskLift) { std::cout << "runTaskLift is TRUE \n";} else { std::cout << "runTaskLift is FALSE \n";}
+	if(runTaskIntake) { std::cout << "runTaskIntake is TRUE \n";} else { std::cout << "runTaskIntake is FALSE \n";}
 
 	// we need to decide which autonomous routine/code to run, based
 	// on the global variable autonomousTime
@@ -181,6 +198,7 @@ void autonomous() {
 void opcontrol() {
 	if(DEBUG){ std::cout << "Starting Opcontrol Task \n"; }
 
+	imuHeadingTest();
 
   // call manual autonomous run option, should be commented out in
 	// tournament production code to invertenly trigger autonmous
@@ -188,7 +206,8 @@ void opcontrol() {
 	if(MANUAL_AUTON) {manualAutonomous(); }		// allow for manual autonmous starts
 																						// define is does in globals.h
 
-  runTask = false;													// ensure manually started tasks are Ended
+  runTaskLift = false;											// ensure manually started tasks are Ended
+  runTaskIntake = false;
 
 	pros::lcd::clear();												// CLEAR out the LCD display
   pros::delay(20);													// We need to give function time to complete

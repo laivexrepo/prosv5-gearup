@@ -22,6 +22,8 @@ extern pros::Motor clawMotor1;
 extern pros::Controller master;
 extern pros::Controller partner;
 
+extern pros::Imu imu_sensor;
+
 // ------------ Global accessible functions -------------------------------
 extern void robotDataLogger();
 

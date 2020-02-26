@@ -4,6 +4,7 @@
 extern void intakeTaskFnc(void* ignore);
 extern void liftTaskFnc(void* ignore);
 
-extern bool runTask;
+extern bool runTaskLift;
+extern bool runTaskIntake;
 
 #endif
