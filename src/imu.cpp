@@ -100,6 +100,8 @@ float pivotForAngleWithIMU(float angle, int speed){
 
     power = speed;
 
+    reachedTarget = false;
+
     while(imu_sensor.get_heading() > targetHeading && !reachedTarget){
       // P-loop
       error = targetHeading - imu_sensor.get_heading();
@@ -108,7 +110,10 @@ float pivotForAngleWithIMU(float angle, int speed){
       if(abs(power) > maxDriveRPM) {
         power = maxDriveRPM;
       }
-      if(DEBUG) { std::cout << "Error: " << error << " Power: " << power << " Current Heading: " << imu_sensor.get_heading() << "\n"; }
+      if(DEBUG) { std::cout << "Error: " << error << " Power: " << power << " Current Heading: " << imu_sensor.get_heading() ;
+         std::cout << " targetHeading: " << targetHeading << "\n";
+      }
+
       // now turn the robot -- we turn counter clockwise
       left_wheel.move_velocity(-power);
       right_wheel.move_velocity(power);

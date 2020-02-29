@@ -79,16 +79,16 @@ void runStandardAuto() {
   if(runTaskLift) { std::cout << "runStandardAuto: runTaskLift is TRUE \n";} else { std::cout << "runTaskLift is FALSE \n";}
   if(runTaskIntake) { std::cout << "runStandardAuto: runTaskIntake is TRUE \n";} else { std::cout << "runTaskIntake is FALSE \n";}
 
-  angleOfTurn = pivotForAngleWithIMU(90, 100);
+  //angleOfTurn = pivotForAngleWithIMU(90, 100);
 
-  if(DEBUG) { std::cout << "Angle of turn: " << angleOfTurn << " Current Heading: " << imu_sensor.get_heading() << " \n"; }
-  pros::delay(1000);            // wait a second
+  //if(DEBUG) { std::cout << "Angle of turn: " << angleOfTurn << " Current Heading: " << imu_sensor.get_heading() << " \n"; }
+  //pros::delay(1000);            // wait a second
 
-  angleOfTurn = pivotForAngleWithIMU(-90, 15);
+  //angleOfTurn = pivotForAngleWithIMU(-90, 15);
 
-  if(DEBUG) { std::cout << "Angle of turn: " << angleOfTurn << " Current Heading: " << imu_sensor.get_heading() << " \n"; }
+  //if(DEBUG) { std::cout << "Angle of turn: " << angleOfTurn << " Current Heading: " << imu_sensor.get_heading() << " \n"; }
 
- /*
+
   driveForDistance(100, 50);  // 100cm forward
 
   liftMoveAngle = 45;         // Tell lift task to move arm
@@ -104,7 +104,7 @@ void runStandardAuto() {
 
   swingTurn(90, 50);					// 90 degree swing turn at 50RPM clockwise
   swingTurn(-90, 50);					// 90 degree swing turn at 50RPM counter clockwise
-*/
+
 
 }
 

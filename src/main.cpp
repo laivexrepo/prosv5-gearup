@@ -198,7 +198,7 @@ void autonomous() {
 void opcontrol() {
 	if(DEBUG){ std::cout << "Starting Opcontrol Task \n"; }
 
-	imuHeadingTest();
+	//imuHeadingTest();
 
   // call manual autonomous run option, should be commented out in
 	// tournament production code to invertenly trigger autonmous
