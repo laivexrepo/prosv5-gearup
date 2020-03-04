@@ -21,7 +21,7 @@ void imuHeadingTest(){
 }
 
 // ------ drivebase IMU based functions -----------------------
-float pivotForAngleWithIMU(float angle, int speed){
+float pivotForAngleWithIMU(float angle, int speed, bool isPivot){
   float finalTurnHeading;               // we will return the final angle we actually
                                         // turned for.
 
@@ -46,11 +46,13 @@ float pivotForAngleWithIMU(float angle, int speed){
   // overshooting the desired turn is minimized
 
   //P-loop constant
-  Kp = 0.2;
+  Kp = 0.02;
 
   bool reachedTarget = false;       // helps us end P-loop - becomes true
                                     // when we have reached target Angle
-
+  if(DEBUG) {
+    if(isPivot) { std::cout << "Pivot turn request \n"; } else { std::cout << "swing turn request \n"; }
+  }
   if(angle > 0) {
     turnCW=true;
     if(DEBUG) { std::cout << "Turning Right CW - postive angle \n";}
@@ -63,61 +65,149 @@ float pivotForAngleWithIMU(float angle, int speed){
   // and we are asked to turn from thsi position another 90 degree - i.e target would be
   // 300 + 90 = 390 degrees we are actually need to look for heading target - 360 = 30degrees
 
-  if(turnCW) {
+  // ------------- CW TURN ----------------------------------------------
+  if(turnCW) {                               // CW TURN
      startingHeading = imu_sensor.get_heading();
      if(DEBUG) { std::cout << "Starting Heading for pivot Turn (CW): " << startingHeading << "\n";}
-     targetHeading = angle;
+     targetHeading = startingHeading + angle;
 
      if(DEBUG) { std::cout << "Pivot turn angle requested: " << angle << " Normalized Heading: " << targetHeading << "\n";}
      if(DEBUG) { std::cout << "Starting Power for pivot Turn: " << speed << "\n";}
 
      power = speed;
+     reachedTarget = false;        // Have we reached our desired target?
+     bool flipZero = false;        // Have we crossed the 'zero' flip point?
+     float newTargetHeading = 0;
 
-     while(imu_sensor.get_heading() < targetHeading && !reachedTarget){
+     if(targetHeading > 360.0) {          // we will cross 'zero'
+       if(DEBUG) { std::cout << "targetHeading: " << targetHeading << " is > 360  \n"; }
+       newTargetHeading = targetHeading - 360.0;
+       if(DEBUG) { std::cout << "normlized targetHeading to: " << newTargetHeading << "\n";}
+     } else {
+       newTargetHeading = targetHeading;
+       if(DEBUG) { std::cout << "normlized targetHeading is original targetHeading: " << newTargetHeading << "\n";}
+     }
+
+     while(!reachedTarget){
+
        // P-loop
-       error = targetHeading - imu_sensor.get_heading();
-       power = abs(power * error * Kp);             // we want to keep power ABS
-       if(DEBUG) { std::cout << "Calculated Power: " << power << " \n"; }
-       if(abs(power) > maxDriveRPM) {
-         power = maxDriveRPM;
-       }
-       if(DEBUG) { std::cout << "Error: " << error << " Power: " << power << " Current Heading: " << imu_sensor.get_heading() << "\n"; }
-       // now turn the robot -- we either turn clockwise
-       left_wheel.move_velocity(power);
-       right_wheel.move_velocity(-power);
+       //error = targetHeading - imu_sensor.get_heading();
+       //power = abs(power * error * Kp);             // we want to keep power ABS
+       //if(DEBUG) { std::cout << "Calculated Power: " << power << " \n"; }
+       //if(abs(power) > maxDriveRPM) {
+       //  power = maxDriveRPM;
+       //}
 
+       if(DEBUG) { std::cout << "Target heading: " << targetHeading << " Current Heading: " << imu_sensor.get_heading() << "\n"; }
+       if(targetHeading > 360.0) {
+          // we will 'zero' flip'
+          if(imu_sensor.get_heading() < 1.0 && !flipZero ){
+             if(DEBUG) { std::cout << "current Heading: " << imu_sensor.get_heading() <<  "\n"; }
+             if(DEBUG) { std::cout << "Flipping ZERO \n"; }
+             flipZero = true;          // we are flipping passed 'zero' point
+          }
+          if(imu_sensor.get_heading() > 359.0 && !flipZero ){
+             if(DEBUG) { std::cout << "current Heading: " << imu_sensor.get_heading() <<  "\n"; }
+             if(DEBUG) { std::cout << "Flipping ZERO \n"; }
+             flipZero = true;          // we are flipping passed 'zero' point
+          }
+
+          if(imu_sensor.get_heading() < 359.0 && flipZero) {
+             if(DEBUG) { std::cout << "current Heading: " << imu_sensor.get_heading() <<  "\n"; }
+             if(DEBUG) { std::cout << "Flipping ZERO is TRUE\n"; }
+             if(imu_sensor.get_heading() > fabsf(newTargetHeading)) {
+               // stop turning
+               if(DEBUG) { std::cout << "Stop turning \n"; }
+               reachedTarget = true;
+            }
+          }
+       } else {
+         if(DEBUG) { std::cout << "current Heading: " << imu_sensor.get_heading() <<  "\n"; }
+         if(imu_sensor.get_heading() > fabsf(newTargetHeading)) {
+           // stop turning
+           if(DEBUG) { std::cout << "Stop turning \n"; }
+           reachedTarget = true;
+         }
+       }
+       // now turn the robot -- we either turn clockwise
+       if(isPivot) {
+          left_wheel.move_velocity(power);
+          right_wheel.move_velocity(-power);
+       } else {
+          left_wheel.move_velocity(power);
+          right_wheel.move_velocity(0);
+       }
        pros::delay(20);                 // keep CPU from being hogged
      }
-  } else {
+  // ------------- CCW TURN ----------------------------------------------
+  } else {                              // CCW TURN
     startingHeading = imu_sensor.get_heading();
     if(DEBUG) { std::cout << "Starting Heading for pivot Turn (CCW): " << startingHeading << "\n";}
 
-    targetHeading = startingHeading + angle;
-    if(targetHeading < 0) { targetHeading = 360 + targetHeading; }
+    targetHeading = startingHeading - abs(angle);
+    if(targetHeading < 0) { targetHeading = targetHeading + 360; }
 
     if(DEBUG) { std::cout << "Pivot turn angle requested: " << angle << " Normalized Heading: " << targetHeading << "\n";}
     if(DEBUG) { std::cout << "Starting Power for pivot Turn: " << speed << "\n";}
 
-    power = speed;
+    power = speed;                // set motor power intially to the requested speed
 
-    reachedTarget = false;
+    reachedTarget = false;        // Have we reached our desired target?
+    bool flipZero = false;        // Have we crossed the 'zero' flip point?
 
-    while(imu_sensor.get_heading() > targetHeading && !reachedTarget){
-      // P-loop
-      error = targetHeading - imu_sensor.get_heading();
-      power = abs(power * error * Kp);             // we want to keep power ABS
-      if(DEBUG) { std::cout << "Calculated Power: " << power << " \n"; }
-      if(abs(power) > maxDriveRPM) {
-        power = maxDriveRPM;
+    //while(imu_sensor.get_heading() < targetHeading && !reachedTarget){
+    while(!reachedTarget){
+      // P-loop -- we are ignoring for testing
+      //error = targetHeading - imu_sensor.get_heading();
+      //power = abs(power * error * Kp);             // we want to keep power ABS
+      //if(DEBUG) { std::cout << "Calculated Power: " << power << " \n"; }
+      //if(abs(power) > maxDriveRPM) {
+      //  power = maxDriveRPM;
+      //}
+      //if(DEBUG) { std::cout << "Error: " << error << " Power: " << power << " Current Heading: " << imu_sensor.get_heading() ;
+      //   std::cout << " targetHeading: " << targetHeading << "\n";
+      //}
+
+      // we need to determine if we should continue to turn or not we stop
+      // turning by setting reachedTarget to true
+      if(DEBUG) { std::cout << "current heading: " << imu_sensor.get_heading() << " targetHeading: " << targetHeading << " \n"; }
+
+      if(startingHeading < fabsf(angle)) {
+        // we are likely on other side of 'zero'
+        if(DEBUG) { std::cout << "statingHeading: " << startingHeading << " is < angle: " << abs(angle) << "\n"; }
+        if(imu_sensor.get_heading() < 1.0 && !flipZero ){
+            if(DEBUG) { std::cout << "current Heading: " << imu_sensor.get_heading() <<  "\n"; }
+            if(DEBUG) { std::cout << "Flipping ZERO \n"; }
+            flipZero = true;          // we are flipping passed 'zero' point
+        }
+
+        if(imu_sensor.get_heading() < 359.0 && imu_sensor.get_heading() > 1.0 && flipZero) {
+           if(DEBUG) { std::cout << "current Heading: " << imu_sensor.get_heading() <<  "\n"; }
+           if(DEBUG) { std::cout << "Flipping ZERO is TRUE\n"; }
+           if(imu_sensor.get_heading() < fabsf(targetHeading)) {
+              // stop turning
+              if(DEBUG) { std::cout << "Stop turning \n"; }
+              reachedTarget = true;
+           }
+        }
+      } else {
+        // we are not passing 'zero' point
+        if(DEBUG) { std::cout << "statingHeading: " << startingHeading << " is > angle: " << abs(angle) << "\n"; }
+        if(DEBUG) { std::cout << "current Heading: " << imu_sensor.get_heading() <<  "\n"; }
+        if(imu_sensor.get_heading() < fabsf(targetHeading)) {
+           // stop turning
+           if(DEBUG) { std::cout << "Stop turning \n"; }
+           reachedTarget = true;
+        }
       }
-      if(DEBUG) { std::cout << "Error: " << error << " Power: " << power << " Current Heading: " << imu_sensor.get_heading() ;
-         std::cout << " targetHeading: " << targetHeading << "\n";
-      }
-
       // now turn the robot -- we turn counter clockwise
-      left_wheel.move_velocity(-power);
-      right_wheel.move_velocity(power);
-
+      if(isPivot){
+        left_wheel.move_velocity(-power);
+        right_wheel.move_velocity(power);
+      } else {
+        left_wheel.move_velocity(0);
+        right_wheel.move_velocity(power);
+      }
       pros::delay(20);                 // keep CPU from being hogged
     }
   }
