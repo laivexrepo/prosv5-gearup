@@ -10,7 +10,7 @@
 #include "tasks.h"
 #include "imu.h"
 
-// Version 1.6 -- IMU with accelerometer 
+// Version 1.6 -- IMU with accelerometer
 
 // Start the various Autonomus tasks to allow "parallel" operation of mechanisms
 pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
@@ -199,7 +199,9 @@ void autonomous() {
 void opcontrol() {
 	if(DEBUG){ std::cout << "Starting Opcontrol Task \n"; }
 
-	//imuHeadingTest();
+	// IMU test routines - can only run one of these at the time
+	//imuHeadingTest();				// test Gyro
+  imuAccelerometerTest();		// test accelerometer
 
   // call manual autonomous run option, should be commented out in
 	// tournament production code to invertenly trigger autonmous

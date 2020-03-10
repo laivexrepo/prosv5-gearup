@@ -20,6 +20,21 @@ void imuHeadingTest(){
     }
 }
 
+// IMU accelerometer test code - only works in opcontrol() for testing
+void imuAccelerometerTest() {
+  bool runIMUtest = true;
+  if(DEBUG) { std::cout << "Running IMU Accelerometer Test Routine \n"; }
+  while(runIMUtest) {
+    if (master.get_digital(DIGITAL_B)) {
+      runIMUtest = false;
+      if(DEBUG){ std::cout << "Ending IMU Accelerometer Test routine \n"; }
+    }
+    pros::c::imu_accel_s_t accel = imu_sensor.get_accel();
+    if(DEBUG) { std::cout << "Current Acceleration: X: " << accel.x << " Y: " << accel.y << " Z: " << accel.z << " \n"; }
+    pros::delay(20);
+  }
+}
+
 // ------ drivebase IMU based functions -----------------------
 float pivotForAngleWithIMU(float angle, int speed, bool isPivot){
   float finalTurnHeading;               // we will return the final angle we actually

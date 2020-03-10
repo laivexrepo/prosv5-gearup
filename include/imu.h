@@ -5,5 +5,6 @@
 float pivotForAngleWithIMU(float angle, int speed, bool isPivot);  // IMU based turn
 
 void imuHeadingTest();
+void imuAccelerometerTest();
 
 #endif
