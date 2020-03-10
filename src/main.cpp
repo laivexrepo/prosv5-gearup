@@ -21,6 +21,9 @@ pros::Task liftTask(liftTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
 							TASK_STACK_DEPTH_DEFAULT, "Lift Task"); //starts the task
 // no need to provide any other parameters
 
+pros::Task watchdogTask(watchdogTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
+							TASK_STACK_DEPTH_DEFAULT, "Watchdog Task"); //starts the task
+// no need to provide any other parameters
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -136,21 +139,13 @@ void competition_initialize() {
 void autonomous() {
   pros::lcd::clear();												// CLEAR out the LCD display
 	pros::delay(20);													// We need to give function time to complete
-/*
-  // Start the various Autonomus tasks to allow "parallel" operation of mechanisms
-	pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
-                TASK_STACK_DEPTH_DEFAULT, "Intake Task"); //starts the task
-	// no need to provide any other parameters
-
-	pros::Task liftTask(liftTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
-                TASK_STACK_DEPTH_DEFAULT, "Lift Task"); //starts the task
-	// no need to provide any other parameters
-*/
 	if(DEBUG) {
 		std::cout << "Are the two required Tasks running? \n";
 		std::cout << "Task Name:" << intakeTask.get_name() << "\n";
 		std::cout << "Task Name:" << liftTask.get_name() << "\n";
 	}
+
+  runTaskWatchdog = false;      // in atuonmous don't run watchdog task
 
   pros::delay(30);
 
@@ -159,6 +154,8 @@ void autonomous() {
 
 	if(runTaskLift) { std::cout << "runTaskLift is TRUE \n";} else { std::cout << "runTaskLift is FALSE \n";}
 	if(runTaskIntake) { std::cout << "runTaskIntake is TRUE \n";} else { std::cout << "runTaskIntake is FALSE \n";}
+	if(runTaskWatchdog) { std::cout << "runTaskWatchdog is TRUE \n";} else { std::cout << "runTaskWatchdog is FALSE \n";}
+
 
 	// we need to decide which autonomous routine/code to run, based
 	// on the global variable autonomousTime
@@ -201,7 +198,7 @@ void opcontrol() {
 
 	// IMU test routines - can only run one of these at the time
 	//imuHeadingTest();				// test Gyro
-  imuAccelerometerTest();		// test accelerometer
+  //imuAccelerometerTest();		// test accelerometer
 
   // call manual autonomous run option, should be commented out in
 	// tournament production code to invertenly trigger autonmous
@@ -211,11 +208,38 @@ void opcontrol() {
 
   runTaskLift = false;											// ensure manually started tasks are Ended
   runTaskIntake = false;
+	runTaskWatchdog = true;      							// in opcontrol run watchdog task
 
 	pros::lcd::clear();												// CLEAR out the LCD display
   pros::delay(20);													// We need to give function time to complete
 
+	if(runTaskLift) { std::cout << "runTaskLift is TRUE \n";} else { std::cout << "runTaskLift is FALSE \n";}
+	if(runTaskIntake) { std::cout << "runTaskIntake is TRUE \n";} else { std::cout << "runTaskIntake is FALSE \n";}
+	if(runTaskWatchdog) { std::cout << "runTaskWatchdog is TRUE \n";} else { std::cout << "runTaskWatchdog is FALSE \n";}
+
+  int count = 0;													// while loop iteration counter
+
+	// FOR testing
+	leftMotorHot=true;
+
   while(true) {
+		// environment monitoring usign watchdog task
+		if(leftMotorHot) {
+  		// Lets write warning to Remote
+	  	if(DEBUG) { std::cout << "OVERHEATING WARING -- left drive motor \n";}
+      if(!(count % 5)) {master.set_text(1, 0, "HOT DRIVE MOTOR");}
+		}
+		if(rightMotorHot) {
+			// Lets write warning to Remote
+			if(DEBUG) { std::cout << "OVERHEATING WARING -- right drive motor \n";}
+			if(!(count % 5)) {master.set_text(1, 0, "HOT DRIVE MOTOR");}
+	  }
+		if(liftMotorHot) {
+			// Lets write warning to Remote
+			if(DEBUG) { std::cout << "OVERHEATING WARING -- lift motor \n";}
+			if(!(count % 5)) {master.set_text(1, 0, "HOT LIFT MOTOR");}
+		}
+
 	 	if(ARCADE_MODE) {												// If set to true operate in ARCADE_MODE
 		 																				// this is controlled in globals.h
 		 	arcadeControl();
@@ -235,6 +259,7 @@ void opcontrol() {
 	  // for each movement.
 	  trayControl(50,25);
 
+    count++;
  	  pros::delay(20);
   }
 }

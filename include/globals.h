@@ -44,4 +44,14 @@ extern int liftMoveAngle;
 extern int liftMoveSpeed;
 extern int liftLastMoveAngle;
 
+extern bool motorEnv;
+extern bool motorLiftEnv;
+
+extern bool leftMotorHot;
+extern bool rightMotorHot;
+extern bool liftMotorHot;
+
+// ................... watchdog trigger ........................................
+extern int tempTrigger;
+
 #endif

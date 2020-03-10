@@ -50,6 +50,17 @@ int liftMoveAngle = 0;        // angle to move arm at in liftTask
 int liftMoveSpeed = 50;       // speed to move lift at in liftTask
 int liftLastMoveAngle = 0;    // last move angle requested in liftTask
 
+bool motorEnv=true;           // watchdog reports motor environment data
+bool motorLiftEnv=true;       // watchdog reports on liftmotor environment data
+
+bool leftMotorHot=false;      // Overheating warning
+bool rightMotorHot=false;     // Overheating warning
+bool liftMotorHot=false;      // Overheating warning
+
+// ................... watchdog trigger ........................................
+int tempTrigger = 50;         // When do we trigger overheating?
+
+
 // --------------------- Global Function definitions ---------------------------
 
 void robotDataLogger() {

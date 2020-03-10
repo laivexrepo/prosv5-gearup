@@ -7,6 +7,7 @@
 
 bool runTaskLift=false;               // controls LIFT if tasks should run.
 bool runTaskIntake=false;             // controls INTAKE if tasks should run
+bool runTaskWatchdog=false;           // control if we run the watchdog task
 
 void intakeTaskFnc(void* ignore) {
   //the void* is there to provide a way to pass a
@@ -81,4 +82,67 @@ void liftTaskFnc(void* ignore) {
     }
     pros::delay(20);              // DO NOT starve the task!!
   }
+}
+
+void watchdogTaskFnc(void* ignore) {
+  //the void* is there to provide a way to pass a
+  //generic value or structure to the task if needed
+  //pros needs this parameter in your function even if you don't use it
+  if(DEBUG) {std::cout << "Starting Watchdog task \n"; }
+  while(true){
+    while(runTaskWatchdog){
+      // run the watchdog task - by setting runTaskWatchdog to flase at any
+      // we can stop these task
+      //if(DEBUG) { std::cout << "Running watchdog task \n"; }
+
+      // we are going to monitor the drive train motors
+      if(motorEnv) {
+         //if(DEBUG) { std::cout << "Motor Environment Data \n";}
+         // monitor and report motor environment data
+         // we will monitor:
+         //    power (Watts)
+         //    torgue (Nm)
+         //    voltage (mV)
+         //    current (mA)
+         //    temperature (C)
+         std::cout << "Left Motor - P: " << left_wheel.get_power() << "W - T: " << left_wheel.get_torque();
+         std::cout << "Nm - V: " << left_wheel.get_voltage() << "mV C: " << left_wheel.get_current_draw();
+         std::cout << "mA - T: " << left_wheel.get_temperature() << "\n";
+
+         if(left_wheel.get_temperature() > tempTrigger) {
+           leftMotorHot = true;
+         }
+
+         std::cout << "Right Motor - P: " << right_wheel.get_power() << "W - T: " << right_wheel.get_torque();
+         std::cout << "Nm - V: " << right_wheel.get_voltage() << "mV C: " << right_wheel.get_current_draw();
+         std::cout << "mA - T: " << right_wheel.get_temperature() << "\n";
+
+         if(right_wheel.get_temperature() > tempTrigger) {
+           rightMotorHot = true;
+         }
+
+       }
+
+       if(motorLiftEnv) {
+          //if(DEBUG) { std::cout << "Motor Environment Data \n";}
+          // monitor and report motor environment data
+          // we will monitor:
+          //    power (Watts)
+          //    torgue (Nm)
+          //    voltage (mV)
+          //    current (mA)
+          //    temperature (C)
+          std::cout << "Lift Motor - P: " << liftMotor.get_power() << "W - T: " << liftMotor.get_torque();
+          std::cout << "Nm - V: " << liftMotor.get_voltage() << "mV C: " << liftMotor.get_current_draw();
+          std::cout << "mA - T: " << liftMotor.get_temperature() << "\n";
+
+          if(liftMotor.get_temperature() > tempTrigger) {
+            liftMotorHot = true;
+          }
+
+       }
+    }
+    pros::delay(20);          // do not starve the CPU
+  }
+  pros::delay(20);            // do not starve CPU
 }
