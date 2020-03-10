@@ -24,6 +24,9 @@
 // tray motors
 #define TRAY_MOTOR_PORT 16
 
+// GYRO / IMU
+#define IMU_PORT 11
+
 // ----------- Radio and Controllers ---------------
 #define VEX_RADIO 6
 

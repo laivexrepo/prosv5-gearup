@@ -9,6 +9,7 @@
 
 #include "main.h"
 #include "portdef.h"
+#include "tasks.h"
 
 
 // --------------------- Global Motor Definitions ------------------------------
@@ -37,6 +38,10 @@ pros::Controller partner(pros::E_CONTROLLER_PARTNER);
 // ------------------- Vision Sensor -------------------------------------------
 
 pros::Vision vision_sensor (VISION_PORT);
+
+// ------------------ IMU ------------------------------------------------------
+
+pros::Imu imu_sensor(IMU_PORT);
 
 // ---------- Global Task Variables ----------------------------------------
 
