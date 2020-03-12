@@ -54,4 +54,10 @@ extern bool liftMotorHot;
 // ................... watchdog trigger ........................................
 extern int tempTrigger;
 
+// ................... Data Logging ............................................
+extern bool USDlogging;
+
+void usdWriteHeader(char* filename);
+void robotDataLogger(char* filename);
+
 #endif

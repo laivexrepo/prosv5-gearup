@@ -25,6 +25,8 @@ pros::Task watchdogTask(watchdogTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
 							TASK_STACK_DEPTH_DEFAULT, "Watchdog Task"); //starts the task
 // no need to provide any other parameters
 
+char filename[] = "/usd/example.txt";
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -32,6 +34,12 @@ pros::Task watchdogTask(watchdogTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	// activate active logging to USD card
+	//usdFileOpen();
+
+	usdWriteHeader(filename);
+
+	//robotDataLogger(filename);
 
 	pros::Motor left_wheel (LEFT_MOTOR_PORT, MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
 	pros::Motor right_wheel (RIGHT_MOTOR_PORT, MOTOR_GEARSET_18, true, pros::E_MOTOR_ENCODER_DEGREES);
@@ -72,18 +80,10 @@ void initialize() {
   // initialize inertial sensor and calibrate
   pros::Imu imu_sensor(IMU_PORT);
 
-	imu_sensor.reset();				// Reset the IMU and start calibration process, robot
-														// should not be moved during this stage of calibration.
+  int calibrateTime = 0;
+  calibrateTime = imuInit();
 
-	int time = pros::millis();
-	int iter = 0;
-	while (imu_sensor.is_calibrating()) {
-		std::cout << "IMU calibrating... " << iter << "\n";
-		iter += 10;
-		pros::delay(10);
-	}
-	// should print about 2000 ms
-	std::cout << "IMU is done calibrating (took: " << iter - time << "ms \n";
+	robotDataLogger(filename);
 
 	if (!pros::competition::is_connected()) {
 		if(DEBUG){ std::cout << "Not connected to FIELD control \n"; }
@@ -208,7 +208,7 @@ void opcontrol() {
 
   runTaskLift = false;											// ensure manually started tasks are Ended
   runTaskIntake = false;
-	runTaskWatchdog = true;      							// in opcontrol run watchdog task
+	runTaskWatchdog = false;      							// in opcontrol run watchdog task
 
 	pros::lcd::clear();												// CLEAR out the LCD display
   pros::delay(20);													// We need to give function time to complete
@@ -220,7 +220,7 @@ void opcontrol() {
   int count = 0;													// while loop iteration counter
 
 	// FOR testing
-	leftMotorHot=true;
+	leftMotorHot=false;
 
   while(true) {
 		// environment monitoring usign watchdog task
@@ -258,6 +258,8 @@ void opcontrol() {
 	  // Control the movement of the tray inwards / outwards using appropriate speed
 	  // for each movement.
 	  trayControl(50,25);
+
+		robotDataLogger(filename);
 
     count++;
  	  pros::delay(20);

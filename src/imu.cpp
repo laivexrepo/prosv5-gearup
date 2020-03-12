@@ -20,6 +20,23 @@ void imuHeadingTest(){
     }
 }
 
+// IMU initialization
+int imuInit(){
+   imu_sensor.reset();				// Reset the IMU and start calibration process, robot
+                          // should not be moved during this stage of calibration.
+
+   int time = pros::millis();
+   int iter = 0;
+   while (imu_sensor.is_calibrating()) {
+      std::cout << "IMU calibrating... " << iter << "\n";
+      iter += 10;
+      pros::delay(10);
+   }
+   // should print about 2000 ms
+   if(DEBUG) { std::cout << "IMU is done calibrating (took: " << iter - time << "ms \n"; }
+   return(iter);        // MS it took to calibrate
+}
+
 // IMU accelerometer test code - only works in opcontrol() for testing
 void imuAccelerometerTest() {
   bool runIMUtest = true;

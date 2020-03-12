@@ -4,6 +4,7 @@
 // drivebase IMU based functions
 float pivotForAngleWithIMU(float angle, int speed, bool isPivot);  // IMU based turn
 
+int imuInit();
 void imuHeadingTest();
 void imuAccelerometerTest();
 
