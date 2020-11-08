@@ -10,7 +10,6 @@
 #include "tasks.h"
 #include "imu.h"
 
-// adding change to test get_proximity
 
 // Start the various Autonomus tasks to allow "parallel" operation of mechanisms
 pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
