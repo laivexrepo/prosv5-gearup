@@ -135,16 +135,7 @@ void competition_initialize() {
 void autonomous() {
   pros::lcd::clear();												// CLEAR out the LCD display
 	pros::delay(20);													// We need to give function time to complete
-/*
-  // Start the various Autonomus tasks to allow "parallel" operation of mechanisms
-	pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
-                TASK_STACK_DEPTH_DEFAULT, "Intake Task"); //starts the task
-	// no need to provide any other parameters
 
-	pros::Task liftTask(liftTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
-                TASK_STACK_DEPTH_DEFAULT, "Lift Task"); //starts the task
-	// no need to provide any other parameters
-*/
 	if(DEBUG) {
 		std::cout << "Are the two required Tasks running? \n";
 		std::cout << "Task Name:" << intakeTask.get_name() << "\n";
@@ -163,7 +154,7 @@ void autonomous() {
 	// on the global variable autonomousTime
 
 	switch(autonomousTime) {
-		default:									// If we have no selection defualt to 15 seconds
+		default:									// If we have no selection default to 15 seconds
 		case 15:
 			// Run the standard 15 sec autonomous code
 			if(DEBUG){ std::cout << "Starting runStandardAuto function  \n"; }
@@ -176,7 +167,7 @@ void autonomous() {
 			break;
 
 		case 60:
-			// Run the 60 seconds - programmign skill code
+			// Run the 60 seconds - programming skill code
       runSkillAuto();
 			break;
 	}
@@ -224,7 +215,7 @@ void opcontrol() {
 	  liftControl(100, 50);
 
     // control the intaqke (claw) if two motors - make sure they are
-	  // activated in glabls.c globals.h initialize() as well as in the clawControl
+	  // activated in globals.c globals.h initialize() as well as in the clawControl
 	  // function in claw.cpp
 	  clawControl();
 

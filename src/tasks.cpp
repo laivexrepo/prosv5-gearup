@@ -55,9 +55,6 @@ void liftTaskFnc(void* ignore) {
   //the void* is there to provide a way to pass a
   //generic value or structure to the task if needed
   //pros needs this parameter in your function even if you don't use it
-  //pros::Controller master(pros::E_CONTROLLER_MASTER);
-  //pros::Motor left_wheel (LEFT_MOTOR_PORT);
-  //pros::Motor right_wheel (RIGHT_MOTOR_PORT);
 
   std::cout << "Starting lift Task \n";
   // We assume we have a global variable which will tell us what angle we

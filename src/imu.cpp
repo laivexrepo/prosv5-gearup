@@ -90,14 +90,6 @@ float pivotForAngleWithIMU(float angle, int speed, bool isPivot){
 
      while(!reachedTarget){
 
-       // P-loop
-       //error = targetHeading - imu_sensor.get_heading();
-       //power = abs(power * error * Kp);             // we want to keep power ABS
-       //if(DEBUG) { std::cout << "Calculated Power: " << power << " \n"; }
-       //if(abs(power) > maxDriveRPM) {
-       //  power = maxDriveRPM;
-       //}
-
        if(DEBUG) { std::cout << "Target heading: " << targetHeading << " Current Heading: " << imu_sensor.get_heading() << "\n"; }
        if(targetHeading > 360.0) {
           // we will 'zero' flip'
@@ -157,17 +149,6 @@ float pivotForAngleWithIMU(float angle, int speed, bool isPivot){
 
     //while(imu_sensor.get_heading() < targetHeading && !reachedTarget){
     while(!reachedTarget){
-      // P-loop -- we are ignoring for testing
-      //error = targetHeading - imu_sensor.get_heading();
-      //power = abs(power * error * Kp);             // we want to keep power ABS
-      //if(DEBUG) { std::cout << "Calculated Power: " << power << " \n"; }
-      //if(abs(power) > maxDriveRPM) {
-      //  power = maxDriveRPM;
-      //}
-      //if(DEBUG) { std::cout << "Error: " << error << " Power: " << power << " Current Heading: " << imu_sensor.get_heading() ;
-      //   std::cout << " targetHeading: " << targetHeading << "\n";
-      //}
-
       // we need to determine if we should continue to turn or not we stop
       // turning by setting reachedTarget to true
       if(DEBUG) { std::cout << "current heading: " << imu_sensor.get_heading() << " targetHeading: " << targetHeading << " \n"; }
