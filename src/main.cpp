@@ -9,17 +9,24 @@
 #include "lcd.h"
 #include "tasks.h"
 #include "imu.h"
+#include "pros/apix.h"								// we need the advanced API header
+#include "pros/rtos.h"
 
+pros::task_t intake = (pros::task_t)NULL;
+pros::task_t lift = (pros::task_t)NULL;
 
-// Start the various Autonomus tasks to allow "parallel" operation of mechanisms
-pros::Task intakeTask(intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
-							TASK_STACK_DEPTH_DEFAULT, "Intake Task"); //starts the task
-// no need to provide any other parameters
-
-pros::Task liftTask(liftTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
-							TASK_STACK_DEPTH_DEFAULT, "Lift Task"); //starts the task
-// no need to provide any other parameters
-
+void killTasks() {
+	// ability to kill running tasks // takss shoudl in general be killed between
+	// competition stage state changes
+	if(intake) {
+  	pros::Task(intake).remove();
+	  intake = (pros::task_t)NULL;
+  }
+	if(lift) {
+		pros::Task(lift).remove();
+		lift = (pros::task_t)NULL;
+	}
+}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -93,7 +100,9 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	killTasks();			// Make sure we got no lingering tasks around
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -105,6 +114,8 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {
+	killTasks();			// Make sure we got no lingering tasks around
+
 	// We can put LCD selector here
 	if(DEBUG){ std::cout << "Running Competition Initialize \n"; }
 
@@ -133,13 +144,24 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-  pros::lcd::clear();												// CLEAR out the LCD display
+  killTasks();			// Make sure we got no lingering tasks around
+	pros::lcd::clear();												// CLEAR out the LCD display
 	pros::delay(20);													// We need to give function time to complete
+
+	// Start the various Autonomus tasks to allow "parallel" operation of mechanisms
+	intake = pros::Task (intakeTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
+								TASK_STACK_DEPTH_DEFAULT, "Intake Task"); //starts the task
+	// no need to provide any other parameters
+
+
+	lift = pros::Task (liftTaskFnc, (void*)"PROS", TASK_PRIORITY_DEFAULT,
+								TASK_STACK_DEPTH_DEFAULT, "Lift Task"); //starts the task
+	// no need to provide any other parameters
 
 	if(DEBUG) {
 		std::cout << "Are the two required Tasks running? \n";
-		std::cout << "Task Name:" << intakeTask.get_name() << "\n";
-		std::cout << "Task Name:" << liftTask.get_name() << "\n";
+		std::cout << "Task Name:" << pros::Task(intake).get_name() << "\n";
+		std::cout << "Task Name:" << pros::Task(lift).get_name() << "\n";
 	}
 
   pros::delay(30);
@@ -188,6 +210,8 @@ void autonomous() {
  */
 void opcontrol() {
 	if(DEBUG){ std::cout << "Starting Opcontrol Task \n"; }
+
+  killTasks();			// Make sure we got no lingering tasks around
 
 	//imuHeadingTest();
 
